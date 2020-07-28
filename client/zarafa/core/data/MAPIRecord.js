@@ -352,7 +352,7 @@ Zarafa.core.data.MAPIRecord = Ext.extend(Ext.data.Record, {
 	 * the modified array. Setting this argument will effectively override the
 	 * {@link Ext.data.Field#forceProtocol forceProtocol} option for the property we are modifying here.
 	 */
-	set : function(name, value, force)
+	set : function(name, value, force = undefined)
 	{
 		var forceProtocol = force;
 		if (!Ext.isDefined(forceProtocol)) {
