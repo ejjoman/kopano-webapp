@@ -118,9 +118,9 @@ Zarafa.contact.attachitem.AttachContactRenderer = Ext.extend(Zarafa.common.attac
 
 		html += this.addHTMLRowGroup({
 			// # TRANSLATORS: See http://docs.sencha.com/extjs/3.4.0/#!/api/Date for the meaning of these formatting instructions
-			'birthday' : '{birthday:formatDefaultTimeString("' + _("l jS F Y {0}") + '")}',
+			'birthday' : '{birthday:date("' + _("jS F Y") + '")}',
 			// # TRANSLATORS: See http://docs.sencha.com/extjs/3.4.0/#!/api/Date for the meaning of these formatting instructions
-			'wedding_anniversary' : '{wedding_anniversary:formatDefaultTimeString("' + _("l jS F Y {0}") + '")}',
+			'wedding_anniversary' : '{wedding_anniversary:date("' + _("jS F Y") + '")}',
 			'spouse_name' : '{spouse_name:htmlEncode}',
 			'profession' : '{profession:htmlEncode}',
 			'assistant' : '{assistant:htmlEncode}',
@@ -196,9 +196,9 @@ Zarafa.contact.attachitem.AttachContactRenderer = Ext.extend(Zarafa.common.attac
 
 		html += this.addPlainRowGroup({
 			// # TRANSLATORS: See http://docs.sencha.com/extjs/3.4.0/#!/api/Date for the meaning of these formatting instructions
-			'birthday' : '{birthday:formatDefaultTimeString("' + _("l jS F Y {0}") + '")}',
+			'birthday' : '{birthday:date("' + _("jS F Y") + '")}',
 			// # TRANSLATORS: See http://docs.sencha.com/extjs/3.4.0/#!/api/Date for the meaning of these formatting instructions
-			'wedding_anniversary' : '{wedding_anniversary:formatDefaultTimeString("' + _("l jS F Y {0}") + '")}',
+			'wedding_anniversary' : '{wedding_anniversary:date("' + _("jS F Y") + '")}',
 			'spouse_name' : '{spouse_name}',
 			'profession' : '{profession}',
 			'assistant' : '{assistant}',
@@ -214,5 +214,26 @@ Zarafa.contact.attachitem.AttachContactRenderer = Ext.extend(Zarafa.common.attac
 		html += '{body}';
 
 		return html;
-	}
+    },
+    
+    /**
+	 * Prepares data for any record for use in the XTemplate
+	 * @param {Zarafa.core.data.MAPIRecord} record The mapi record to print
+	 * @return {Array} Data suitable for use in the XTemplate
+	 */
+	prepareData: function(record) {
+        var data = Zarafa.contact.attachitem.AttachContactRenderer.superclass.prepareData.apply(this, arguments);
+
+        var birthday = record.get('birthday');
+        if (Ext.isDate(birthday)) {
+            data['birthday'] = birthday.toUTC();
+        }
+
+        var anniversary = record.get('wedding_anniversary');
+        if (Ext.isDate(anniversary)) {
+            data['wedding_anniversary'] = anniversary.toUTC();
+        }
+
+        return data;
+    }
 });

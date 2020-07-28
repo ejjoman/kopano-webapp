@@ -201,9 +201,9 @@ Zarafa.contact.dialogs.ContactDetailTab = Ext.extend(Ext.form.FormPanel, {
 				xtype : 'datefield',
 				fieldLabel : _('Birthday'),
 				ref : '../birthdayField',
-				name : 'birthday',
+				utcname : 'birthday', // don't bind the field directly to the record to be able to convert the date from/to UTC
 				// # TRANSLATORS: See http://docs.sencha.com/extjs/3.4.0/#!/api/Date for the meaning of these formatting instructions
-				format : ('d/m/Y'),
+				format : _('d/m/Y'),
 				listeners : {
 					scope : this,
 					change : this.onDateChange
@@ -212,9 +212,9 @@ Zarafa.contact.dialogs.ContactDetailTab = Ext.extend(Ext.form.FormPanel, {
 				xtype : 'datefield',
 				fieldLabel : _('Anniversary'),
 				ref : '../anniversaryField',
-				name : 'wedding_anniversary',
+				utcname : 'wedding_anniversary', // don't bind the field directly to the record to be able to convert the date from/to UTC
 				// # TRANSLATORS: See http://docs.sencha.com/extjs/3.4.0/#!/api/Date for the meaning of these formatting instructions
-				format : ('d/m/Y'),
+				format : _('d/m/Y'),
 				listeners : {
 					scope : this,
 					change : this.onDateChange
@@ -237,7 +237,19 @@ Zarafa.contact.dialogs.ContactDetailTab = Ext.extend(Ext.form.FormPanel, {
 
 		this.record = record;
 
-		this.getForm().loadRecord(record);
+        this.getForm().loadRecord(record);
+        
+        var birthday = record.get('birthday');
+		if (Ext.isDate(birthday)) {
+			birthday = birthday.toUTC(); // The birthday is an UTC representation
+			this.birthdayField.setValue(birthday);
+        }
+        
+        var anniversary = record.get('wedding_anniversary');
+		if (Ext.isDate(anniversary)) {
+			anniversary = anniversary.toUTC(); // The anniversary is an UTC representation
+			this.anniversaryField.setValue(anniversary);
+		}
 	},
 
 	/**
@@ -257,7 +269,7 @@ Zarafa.contact.dialogs.ContactDetailTab = Ext.extend(Ext.form.FormPanel, {
 		// and the dates refer to a different time.
 		var newBirthDay = this.birthdayField.getValue();
 		var oldBirthDay = record.get(this.birthdayField.getName());
-		if (Ext.isDate(newBirthDay) !== Ext.isDate(oldBirthDay) || (Ext.isDate(newBirthDay) && newBirthDay !== oldBirthDay)) {
+		if (Ext.isDate(newBirthDay) !== Ext.isDate(oldBirthDay) || (Ext.isDate(newBirthDay) && newBirthDay.getTime() !== oldBirthDay.toUTC().getTime())) {
 			this.onDateChange(this.birthdayField, newBirthDay, oldBirthDay);
 		}
 
@@ -265,7 +277,7 @@ Zarafa.contact.dialogs.ContactDetailTab = Ext.extend(Ext.form.FormPanel, {
 		// Same logic for values applies here as for the birthday described above.
 		var newAnniversary = this.anniversaryField.getValue();
 		var oldAnniversary = record.get(this.anniversaryField.getName());
-		if (Ext.isDate(newAnniversary) !== Ext.isDate(oldAnniversary) || (Ext.isDate(newAnniversary) && newAnniversary !== oldAnniversary)) {
+		if (Ext.isDate(newAnniversary) !== Ext.isDate(oldAnniversary) || (Ext.isDate(newAnniversary) && newAnniversary.getTime() !== oldAnniversary.toUTC().getTime())) {
 			this.onDateChange(this.anniversaryField, newAnniversary, oldAnniversary);
 		}
 
@@ -279,6 +291,18 @@ Zarafa.contact.dialogs.ContactDetailTab = Ext.extend(Ext.form.FormPanel, {
 		    record.isModifiedSinceLastUpdate('surname') ||
 		    record.isModifiedSinceLastUpdate('generation')) {
 			this.generateDisplayName();
+        }
+        
+        // Because the fields 'birthday' and 'wedding_anniversary' are not bound directly to the record, we need to update them manually.
+        // This is needed, so we can convert the date from/to UTC
+        var birthday = this.birthdayField.getValue();
+        if (Ext.isDate(birthday)) {
+			record.set('birthday', birthday.fromUTC()); // The birthday is an UTC representation
+        }
+        
+        var anniversary = this.anniversaryField.getValue();
+        if (Ext.isDate(anniversary)) {
+			record.set('wedding_anniversary', anniversary.fromUTC()); // The anniversary is an UTC representation
 		}
 
 		record.endEdit();
@@ -336,15 +360,16 @@ Zarafa.contact.dialogs.ContactDetailTab = Ext.extend(Ext.form.FormPanel, {
 	{
 		if (field.validateValue(field.processValue(newValue))) {
 			this.record.beginEdit();
-
-			if (Ext.isEmpty(newValue)) {
-				this.record.set(field.getName(), null);
-			} else {
-				this.record.set(field.getName(), newValue);
-			}
+            
+            if (Ext.isDate(newValue) && !Ext.isEmpty(newValue)) {
+                this.record.set(field.utcname, newValue.fromUTC()); // The date is an UTC representation
+            }
+            else {
+                this.record.set(field.utcname, null);
+            }
 
 			// send entryid to server if anything is changed
-			if (field.getName() == 'birthday') {
+			if (field.utcname == 'birthday') {
 				this.record.set('birthday_eventid', this.record.get('birthday_eventid'), true);
 			} else {
 				this.record.set('anniversary_eventid', this.record.get('anniversary_eventid'), true);

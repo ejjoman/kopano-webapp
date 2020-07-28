@@ -159,14 +159,16 @@ Zarafa.contact.ui.ContactGridColumnModel = Ext.extend(Zarafa.common.ui.grid.Colu
 			dataIndex : 'birthday',
 			header : _('Birthday'),
 			hidden : true,
-			tooltip : _('Sort by: Birthday'),
-			renderer : Zarafa.common.ui.grid.Renderers.date
+            tooltip : _('Sort by: Birthday'),
+            // the birthday is represented in UTC, so convert it to a local date
+			renderer : Zarafa.common.ui.grid.Renderers.utcdate
 		},{
 			dataIndex : 'wedding_anniversary',
 			header : _('Anniversary'),
 			hidden : true,
-			tooltip : _('Sort by: Anniversary'),
-			renderer : Zarafa.common.ui.grid.Renderers.date
+            tooltip : _('Sort by: Anniversary'),
+            // the anniversary is represented in UTC, so convert it to a local date
+			renderer : Zarafa.common.ui.grid.Renderers.utcdate
 		},{
 			dataIndex : 'business_address',
 			header : _('Business Address'),
