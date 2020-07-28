@@ -27,3 +27,6 @@ test/php/htmlcov/
 node_modules
 # Stupid macos files
 .DS_Store
+# Visual Studio Code folder + config files
+.vscode
+jsconfig.json
