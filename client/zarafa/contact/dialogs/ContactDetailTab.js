@@ -237,15 +237,15 @@ Zarafa.contact.dialogs.ContactDetailTab = Ext.extend(Ext.form.FormPanel, {
 
 		this.record = record;
 
-        this.getForm().loadRecord(record);
-        
-        var birthday = record.get('birthday');
+		this.getForm().loadRecord(record);
+		
+		var birthday = record.get('birthday');
 		if (Ext.isDate(birthday)) {
 			birthday = birthday.toUTC(); // The birthday is an UTC representation
 			this.birthdayField.setValue(birthday);
-        }
-        
-        var anniversary = record.get('wedding_anniversary');
+		}
+		
+		var anniversary = record.get('wedding_anniversary');
 		if (Ext.isDate(anniversary)) {
 			anniversary = anniversary.toUTC(); // The anniversary is an UTC representation
 			this.anniversaryField.setValue(anniversary);
@@ -286,22 +286,22 @@ Zarafa.contact.dialogs.ContactDetailTab = Ext.extend(Ext.form.FormPanel, {
 
 		// Regenerate the display name
 		if (record.isModifiedSinceLastUpdate('display_name_prefix') ||
-		    record.isModifiedSinceLastUpdate('given_name') ||
-		    record.isModifiedSinceLastUpdate('middle_name') ||
-		    record.isModifiedSinceLastUpdate('surname') ||
-		    record.isModifiedSinceLastUpdate('generation')) {
+			record.isModifiedSinceLastUpdate('given_name') ||
+			record.isModifiedSinceLastUpdate('middle_name') ||
+			record.isModifiedSinceLastUpdate('surname') ||
+			record.isModifiedSinceLastUpdate('generation')) {
 			this.generateDisplayName();
-        }
-        
-        // Because the fields 'birthday' and 'wedding_anniversary' are not bound directly to the record, we need to update them manually.
-        // This is needed, so we can convert the date from/to UTC
-        var birthday = this.birthdayField.getValue();
-        if (Ext.isDate(birthday)) {
+		}
+		
+		// Because the fields 'birthday' and 'wedding_anniversary' are not bound directly to the record, we need to update them manually.
+		// This is needed, so we can convert the date from/to UTC
+		var birthday = this.birthdayField.getValue();
+		if (Ext.isDate(birthday)) {
 			record.set('birthday', birthday.fromUTC()); // The birthday is an UTC representation
-        }
-        
-        var anniversary = this.anniversaryField.getValue();
-        if (Ext.isDate(anniversary)) {
+		}
+		
+		var anniversary = this.anniversaryField.getValue();
+		if (Ext.isDate(anniversary)) {
 			record.set('wedding_anniversary', anniversary.fromUTC()); // The anniversary is an UTC representation
 		}
 
@@ -360,13 +360,13 @@ Zarafa.contact.dialogs.ContactDetailTab = Ext.extend(Ext.form.FormPanel, {
 	{
 		if (field.validateValue(field.processValue(newValue))) {
 			this.record.beginEdit();
-            
-            if (Ext.isDate(newValue) && !Ext.isEmpty(newValue)) {
-                this.record.set(field.utcname, newValue.fromUTC()); // The date is an UTC representation
-            }
-            else {
-                this.record.set(field.utcname, null);
-            }
+			
+			if (Ext.isDate(newValue) && !Ext.isEmpty(newValue)) {
+				this.record.set(field.utcname, newValue.fromUTC()); // The date is an UTC representation
+			}
+			else {
+				this.record.set(field.utcname, null);
+			}
 
 			// send entryid to server if anything is changed
 			if (field.utcname == 'birthday') {

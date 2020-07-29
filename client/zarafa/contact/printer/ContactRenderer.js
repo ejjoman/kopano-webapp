@@ -64,27 +64,27 @@ Zarafa.contact.printer.ContactRenderer = Ext.extend(Zarafa.common.printer.render
 		html += record.getBody(true);
 		html += '</p>\n';
 		return html;
-    },
-    
-    /**
+	},
+	
+	/**
 	 * Prepares data for any record for use in the XTemplate
 	 * @param {Zarafa.core.data.MAPIRecord} record The mapi record to print
 	 * @return {Array} Data suitable for use in the XTemplate
 	 */
 	prepareData: function(record) {
-        var data = Zarafa.contact.printer.ContactRenderer.superclass.prepareData.apply(this, arguments);
+		var data = Zarafa.contact.printer.ContactRenderer.superclass.prepareData.apply(this, arguments);
 
-        var birthday = record.get('birthday');
-        if (Ext.isDate(birthday)) {
-            data['birthday'] = birthday.toUTC();
-        }
+		var birthday = record.get('birthday');
+		if (Ext.isDate(birthday)) {
+			data['birthday'] = birthday.toUTC();
+		}
 
-        var anniversary = record.get('wedding_anniversary');
-        if (Ext.isDate(anniversary)) {
-            data['wedding_anniversary'] = anniversary.toUTC();
-        }
+		var anniversary = record.get('wedding_anniversary');
+		if (Ext.isDate(anniversary)) {
+			data['wedding_anniversary'] = anniversary.toUTC();
+		}
 
-        return data;
-    }
+		return data;
+	}
 });
 
